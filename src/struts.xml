@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="true" /><!--用于struts动态方法调用-->
+    <constant name="struts.devMode" value="true" />
+    <!-- <constant name="struts.i18n.encoding" value="utf-8"></constant> -->
+    <constant name="struts.multipart.maxSize" value="1000000000"></constant>
+
+    <package name="Interceptor_System" namespace="/" extends="json-default">
+	   	<interceptors>  
+            <interceptor name="Interceptot_Log"  class="com.BangBang.Util.Interceptot_Log">  
+            </interceptor>  
+            <!-- 拦截器栈 -->  
+            <interceptor-stack name="mydefault">  
+                <interceptor-ref name="defaultStack" />  
+                <interceptor-ref name="Interceptot_Log" />  
+            </interceptor-stack>  
+        </interceptors>  
+        <default-interceptor-ref name="mydefault"></default-interceptor-ref>
+        <global-results>
+        	<result name="login" >login.jsp</result>
+     	</global-results>
+    </package>	 
+
+    <package name="system" namespace="/" extends="json-default,Interceptor_System">
+    	<global-results>
+            <result name="error">login.jsp</result>
+        </global-results> 
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error"/>
+        </global-exception-mappings>   
+        
+        <action name="UserAction" class="com.BangBang.Action._system_userAction">
+          <result type="json">
+				<param name="root">result1</param>
+		  </result>
+        </action>
+        
+    </package>
+    
+</struts>
