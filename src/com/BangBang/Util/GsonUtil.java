@@ -38,7 +38,7 @@ public class GsonUtil {
 	}
 	/*
 	 * 将传入的object转换成json字符串并response到浏览器
-	 * 作�?：ZJB
+	 * 作者：ZJB
 	 */
 	public static String zjbObjectToJson(Object src) {
 		Gson gson = new GsonBuilder().serializeNulls().create();
