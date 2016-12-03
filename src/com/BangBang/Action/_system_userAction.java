@@ -92,7 +92,6 @@ public class _system_userAction extends ActionSupport {
 			GsonUtil.OnjectToJsonP(map);
 			return;
 		}
-		String uname = (String) htsession.getAttribute("username");
 		if(htsession.getAttribute("username") == null){
 			System.out.println("未登陆");
 			htsession.setAttribute("username",username);

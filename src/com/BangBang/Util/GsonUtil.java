@@ -42,7 +42,7 @@ public class GsonUtil {
 	}
 	
 	
-	public static void OnjectToJsonP(Object src){
+	public static void OnjectToJsonP(Object src) {
 		HttpServletRequest req = ServletActionContext.getRequest();
 		String callback = req.getParameter("callback");
 		try {
