@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
 import org.apache.log4j.Logger;
 	/*
 	 * json util�?
@@ -35,6 +39,24 @@ public class GsonUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}				
+	}
+	
+	
+	public static void OnjectToJsonP(Object src){
+		HttpServletRequest req = ServletActionContext.getRequest();
+		String callback = req.getParameter("callback");
+		try {
+			Gson gson = new GsonBuilder().serializeNulls().create();
+	        String str = gson.toJson(src);
+	        str=str.replaceAll("null","\"\"");
+	        str = callback + "(" + str + ")";  
+	        logger.info("返回json数据(来自GsonUtil)" + str);
+	        ServletActionContext.getResponse().setContentType("text/javascript;charset=utf-8");
+				ServletActionContext.getResponse().getWriter().write(str);
+				ServletActionContext.getResponse().getWriter().flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
 	}
 	/*
 	 * 将传入的object转换成json字符串并response到浏览器

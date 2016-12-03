@@ -1,5 +1,6 @@
 package com.BangBang.Action;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 import javassist.expr.NewArray;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
@@ -17,6 +19,8 @@ import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 
 import com.BangBang.Util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -25,6 +29,8 @@ public class _system_userAction extends ActionSupport {
 	private static final long serialVersionUID = 1L;
 	ActionContext Context = ActionContext.getContext();
 	HttpServletRequest request = ServletActionContext.getRequest();
+	
+	HttpServletResponse response = ServletActionContext.getResponse();
 	HttpSession htsession  = request.getSession();	
 	
 	Map<String, Object> map = new HashMap<String, Object>();
@@ -35,9 +41,24 @@ public class _system_userAction extends ActionSupport {
 		String password = request.getParameter("password");
 		
 		if(username == null || password == null){
-			map.put("success", false);
+			map.put("success", "1");
 			map.put("msg", "登陆信息不完整");
-			GsonUtil.OnjectToJson(map);
+			
+			
+			/*	String output = callback + "(" +GsonUtil.zjbObjectToJson(map) + ")";  
+			
+			
+			response.setContentType("text/javascript;charset=utf-8");
+			try {
+				ServletActionContext.getResponse().getWriter().write(output);
+				ServletActionContext.getResponse().getWriter().flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}*/
+			//String callback = request.getParameter("callback");
+			GsonUtil.OnjectToJsonP(map);
+			
+			return;
 		}
 		
 		String md5passwd = CipherUtil.generatePassword(password);
@@ -59,7 +80,8 @@ public class _system_userAction extends ActionSupport {
 			e.printStackTrace();
 			map.put("success", false);
 			map.put("msg", e.getCause());
-			GsonUtil.OnjectToJson(map);
+			
+			GsonUtil.OnjectToJsonP(map);
 			return;
 		}
 		
@@ -67,7 +89,7 @@ public class _system_userAction extends ActionSupport {
 			map.put("success", false);
 			map.put("msg", "用户名或者密码错误");
 			
-			GsonUtil.OnjectToJson(map);
+			GsonUtil.OnjectToJsonP(map);
 			return;
 		}
 		String uname = (String) htsession.getAttribute("username");
@@ -99,7 +121,7 @@ public class _system_userAction extends ActionSupport {
 		*/
 		map.put("success", true);
 		map.put("msg", "登录成功");
-		GsonUtil.OnjectToJson(map);
+		GsonUtil.OnjectToJsonP(map);
     }
 	
 	public boolean isLogined(String username){
