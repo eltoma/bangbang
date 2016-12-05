@@ -176,13 +176,29 @@ public class _system_userAction extends ActionSupport {
     
     public void editUertInfo() {
     	String username = strNullCheck(request.getParameter("username"));
-		String password = strNullCheck(request.getParameter("password"));
+		if(username.equals("")){
+			map.put("success", false);
+	    	map.put("msg", "用户名字段不能为空");
+	    	
+	    	GsonUtil.OnjectToJsonP(map);
+	    	return;
+		}
+    	
+    	String password = strNullCheck(request.getParameter("password"));
 		String phoneNumber = strNullCheck(request.getParameter("phoneNumber"));
     	
-    	String sql = "UPDATE userinfo u set u.password = ? ,u.phoneNumber=? where userName = ?";
+		
+		
+		String md5passwd = CipherUtil.generatePassword(password);
+    	String sql = "{call u_userinfo('"
+    			+ username +"','"
+    			+ md5passwd +"','"
+    			+ phoneNumber +  "')}";
     	
-    	Map<String, Object> userinfo = QueryUtil.QueryBySql(sql).get(0);
-    	GsonUtil.OnjectToJsonP(userinfo);
+    	String res = QueryUtil.ExecUpdateSql(sql);
+    	map.put("success", res.startsWith("1"));
+    	map.put("msg", res.substring(1));
+    	GsonUtil.OnjectToJsonP(map);
     }
     
     
