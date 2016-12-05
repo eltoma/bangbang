@@ -41,23 +41,10 @@ public class _system_userAction extends ActionSupport {
 		String password = request.getParameter("password");
 		
 		if(username == null || password == null){
-			map.put("success", "1");
+			map.put("success", false);
 			map.put("msg", "登陆信息不完整");
 			
-			
-			/*	String output = callback + "(" +GsonUtil.zjbObjectToJson(map) + ")";  
-			
-			
-			response.setContentType("text/javascript;charset=utf-8");
-			try {
-				ServletActionContext.getResponse().getWriter().write(output);
-				ServletActionContext.getResponse().getWriter().flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}*/
-			//String callback = request.getParameter("callback");
 			GsonUtil.OnjectToJsonP(map);
-			
 			return;
 		}
 		
@@ -98,26 +85,7 @@ public class _system_userAction extends ActionSupport {
 		}
 		
 		System.out.println("登陆用户："+htsession.getAttribute("username"));
-		/*Map<String, Object> app = Context.getApplication();
-		
-		if(app.get("onlineUers") == null){
-			app.put("onlineUers", new HashSet<String>()); 
-		}
-		
-		if(uname == null) {
-			htsession.setAttribute("username", username);
-			
-			Set<String> onlineUers = (Set<String>) app.get("onlineUers");
-			try {
-				onlineUers.add(username);
-				app.put("onlineUers", onlineUers);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		Set<String> onlineUers = (Set<String>) app.get("onlineUers");
-		System.out.println("在线用户列表：" + onlineUers.toString());
-		*/
+
 		map.put("success", true);
 		map.put("msg", "登录成功");
 		GsonUtil.OnjectToJsonP(map);
@@ -127,21 +95,72 @@ public class _system_userAction extends ActionSupport {
 		return (null != htsession.getAttribute(username));
 	}
 	
-	   public void logout()
-	    {
-	    	HttpSession session  = request.getSession();  
-	    	if(session != null)
-	    	{
-	    		try {
-	    			session.invalidate();
-	    			map.put("success", true);
-	    			map.put("msg","退出成功！");
-				} catch (Exception e) {
-					map.put("success", false);
-				}
-	    	}
-	    	
-	    	GsonUtil.OnjectToJson(map);
-	    }
+    public void logout()
+    {
+    	HttpSession session  = request.getSession();  
+    	if(session != null)
+    	{
+    		try {
+    			session.invalidate();
+    			map.put("success", true);
+    			map.put("msg","退出成功！");
+			} catch (Exception e) {
+				map.put("success", false);
+			}
+    	}
+	
+    	GsonUtil.OnjectToJson(map);
+    }
+    
+    public void signUp(){
+    	String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		if(username == null || password == null){
+			map.put("success", false);
+			map.put("msg", "注册信息不完整");
+			GsonUtil.OnjectToJsonP(map);
+			return;
+		}
+		
+		String sqlexist = "select * from userinfo where userName=?";
+		String sqladd = "INSERT INTO userinfo(userName, password, score) VALUES( ?, ?, 10)";
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		
+		String md5passwd = CipherUtil.generatePassword(password);
+		
+		try {
+			session.beginTransaction();
+			Query query = session.createSQLQuery(sqlexist);
+			query.setString(0, username);
+			
+			List list = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+			if(list.size() != 0) {
+				map.put("sucess", true);
+				map.put("msg", "用户名已存在,请重试");
+				GsonUtil.OnjectToJsonP(map);
+				return;
+			}
+			
+			query = session.createSQLQuery(sqladd);
+			
+			query.setString(0, username);
+			query.setString(1, md5passwd);
+			
+			query.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();;
+			e.printStackTrace();
+			map.put("success", false);
+			map.put("msg", "错误信息:"+e.getCause());
+			GsonUtil.OnjectToJsonP(map);
+			return;
+		}
+		
+		map.put("sucess", true);
+		map.put("msg", "注册成功");
+		GsonUtil.OnjectToJsonP(map);
+    }
 }
 
