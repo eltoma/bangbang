@@ -14,7 +14,7 @@ import com.BangBang.Util.HibernateUtil;
 public class QueryUtil {
 
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> QueryBySql(String qrySql) {	
+	public static List<Map<String, Object>> QueryBySql(String qrySql) {	
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		@SuppressWarnings("rawtypes")
 		List sqlList = null;
@@ -31,7 +31,7 @@ public class QueryUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> QueryBySqlWithoutTrans(String qrySql) {	
+	public static List<Map<String, Object>> QueryBySqlWithoutTrans(String qrySql) {	
 		Session session = (Session) HibernateUtil.getSessionFactory().openSession();
 		@SuppressWarnings("rawtypes")
 		List sqlList = null;
@@ -53,7 +53,7 @@ public class QueryUtil {
 	/**
 	 * 用于执行更新和插入类存储过程，且需要从存储过过程返回执行结果
 	 */
-	public String ExecSqlWithScalarResu(String qrySql) {
+	public static String ExecSqlWithScalarResu(String qrySql) {
 		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -75,7 +75,7 @@ public class QueryUtil {
 	/**
 	 * 用于执行查询 总行数 的存储过程
 	 */
-	public Integer ExecSqlWithIntScalarResu(String qrySql) {
+	public static Integer ExecSqlWithIntScalarResu(String qrySql) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		
@@ -95,7 +95,7 @@ public class QueryUtil {
 		return strRes;
 	}
 	
-	public BigDecimal ExecSqlWithBigDecScalarResu(String qrySql) {
+	public static BigDecimal ExecSqlWithBigDecScalarResu(String qrySql) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		SQLQuery sqlQuery = null; 
@@ -113,7 +113,7 @@ public class QueryUtil {
 	}
 	
 	// 执行更新语句,不能接收存储过程返回的执行结果
-	public String ExecUpdateSql(String sql)
+	public static String ExecUpdateSql(String sql)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		try {

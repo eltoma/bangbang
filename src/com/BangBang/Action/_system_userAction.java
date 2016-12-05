@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javassist.expr.NewArray;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -115,8 +114,9 @@ public class _system_userAction extends ActionSupport {
     public void signUp(){
     	String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		String phoneNumber = request.getParameter("phoneNumber");
 		
-		if(username == null || password == null){
+		if(username == null || password == null || phoneNumber == null){
 			map.put("success", false);
 			map.put("msg", "注册信息不完整");
 			GsonUtil.OnjectToJsonP(map);
@@ -124,7 +124,7 @@ public class _system_userAction extends ActionSupport {
 		}
 		
 		String sqlexist = "select * from userinfo where userName=?";
-		String sqladd = "INSERT INTO userinfo(userName, password, score) VALUES( ?, ?, 10)";
+		String sqladd = "INSERT INTO userinfo(userName, password, phoneNumber,score) VALUES( ?, ?, ?,10)";
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		
 		String md5passwd = CipherUtil.generatePassword(password);
@@ -146,6 +146,7 @@ public class _system_userAction extends ActionSupport {
 			
 			query.setString(0, username);
 			query.setString(1, md5passwd);
+			query.setString(2, phoneNumber);
 			
 			query.executeUpdate();
 			session.getTransaction().commit();
@@ -162,5 +163,60 @@ public class _system_userAction extends ActionSupport {
 		map.put("msg", "注册成功");
 		GsonUtil.OnjectToJsonP(map);
     }
+    
+    public void getUertInfo(){
+    	String username = request.getParameter("username");
+    	
+    	String sql = "select * from userinfo where userName='"
+    			+ username +"'";
+    	
+    	Map<String, Object> userinfo = QueryUtil.QueryBySql(sql).get(0);
+    	GsonUtil.OnjectToJsonP(userinfo);
+    }
+    
+    public void editUertInfo() {
+    	String username = strNullCheck(request.getParameter("username"));
+		String password = strNullCheck(request.getParameter("password"));
+		String phoneNumber = strNullCheck(request.getParameter("phoneNumber"));
+    	
+    	String sql = "UPDATE userinfo u set u.password = ? ,u.phoneNumber=? where userName = ?";
+    	
+    	Map<String, Object> userinfo = QueryUtil.QueryBySql(sql).get(0);
+    	GsonUtil.OnjectToJsonP(userinfo);
+    }
+    
+    
+    public String strNullCheck(String src){
+    	return (src ==null)?"":src;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
