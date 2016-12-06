@@ -136,7 +136,7 @@ public class _system_userAction extends ActionSupport {
 			
 			List list = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 			if(list.size() != 0) {
-				map.put("sucess", true);
+				map.put("success", false);
 				map.put("msg", "用户名已存在,请重试");
 				GsonUtil.OnjectToJsonP(map);
 				return;
@@ -154,12 +154,12 @@ public class _system_userAction extends ActionSupport {
 			session.getTransaction().rollback();;
 			e.printStackTrace();
 			map.put("success", false);
-			map.put("msg", "错误信息:"+e.getCause());
+			map.put("msg", e.getCause().toString());
 			GsonUtil.OnjectToJsonP(map);
 			return;
 		}
 		
-		map.put("sucess", true);
+		map.put("success", true);
 		map.put("msg", "注册成功");
 		GsonUtil.OnjectToJsonP(map);
     }
