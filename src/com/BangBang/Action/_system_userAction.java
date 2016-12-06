@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 
+
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,6 +19,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 
+import com.BangBang.DAO.MissionInfoDAO;
 import com.BangBang.Util.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +37,9 @@ public class _system_userAction extends ActionSupport {
 	
 	Map<String, Object> map = new HashMap<String, Object>();
 	
+	/********************************************************************
+	 *                       用户信息相关接口(开始)
+	 *******************************************************************/
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void Login() {
 		String username = request.getParameter("username");
@@ -134,6 +140,7 @@ public class _system_userAction extends ActionSupport {
 			Query query = session.createSQLQuery(sqlexist);
 			query.setString(0, username);
 			
+			@SuppressWarnings("rawtypes")
 			List list = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 			if(list.size() != 0) {
 				map.put("success", false);
@@ -205,6 +212,41 @@ public class _system_userAction extends ActionSupport {
     public String strNullCheck(String src){
     	return (src ==null)?"":src;
     }
+    
+	/****用户信息相关接口(结束)**********************************************/
+    
+    
+	/********************************************************************
+	 *                       任务信息相关接口(开始)
+	 *******************************************************************/
+    public void listMissions(){
+		String q = strNullCheck(request.getParameter("q"));
+		
+		int offset = intNullCheck(request.getParameter("begin"));
+		int size = intNullCheck(request.getParameter("end"));;
+		int relsuid = intNullCheck(request.getParameter("relsuid"));
+		int recvuid = intNullCheck(request.getParameter("recvuid"));
+		
+    	MissionInfoDAO missionInfoDAO = new MissionInfoDAO();
+    	List<Map<String, Object>> datalist = missionInfoDAO.listMissionInfo(offset, size, relsuid, q, recvuid);
+    	Integer total = missionInfoDAO.getMissionInfoTotal(relsuid, q, recvuid);
+    	
+    	map.put("success", true);
+    	map.put("rows", datalist);
+    	map.put("total", total);
+    	
+    	GsonUtil.OnjectToJsonP(map);
+    }
+    
+    private int intNullCheck(String str) {
+    	return (str == null)?-1:Integer.parseInt(str); 
+    }
+    
+    
+    
+    /****用户信息相关接口(结束)**********************************************/
+    
+    
     
     
     

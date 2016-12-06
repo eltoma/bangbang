@@ -8,11 +8,11 @@
 	<property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
     
     <!-- 连接数据库的URL--> 
- 	<property name="connection.url">jdbc:mysql://127.0.0.1:3306/bangbang</property>
+ 	<property name="connection.url">jdbc:mysql://119.29.241.75:3306/bangbang?useUnicode=true&amp;characterEncoding=utf8</property>
 
-    <property name="connection.username">bb</property>
+    <property name="connection.username">root</property>
      <!--登录密码--> 
-    <property name="connection.password">123</property> 
+    <property name="connection.password">zjb622622</property> 
 
 
     <!--JDBC驱动程序-->
