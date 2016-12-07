@@ -222,15 +222,27 @@ public class _system_userAction extends ActionSupport {
     public void listMissions(){
 		String q = strNullCheck(request.getParameter("q"));
 		
-		int offset = intNullCheck(request.getParameter("begin"));
-		int size = intNullCheck(request.getParameter("end"));;
+		int offset = intNullCheck(request.getParameter("offset"));
+		int size = intNullCheck(request.getParameter("size"));;
 		int relsuid = intNullCheck(request.getParameter("relsuid"));
 		int recvuid = intNullCheck(request.getParameter("recvuid"));
 		
+		if(offset == -1){ offset = 0;}
+		if(size == -1){ size = 3;}
+		
     	MissionInfoDAO missionInfoDAO = new MissionInfoDAO();
-    	List<Map<String, Object>> datalist = missionInfoDAO.listMissionInfo(offset, size, relsuid, q, recvuid);
-    	Integer total = missionInfoDAO.getMissionInfoTotal(relsuid, q, recvuid);
-    	
+    	List<Map<String, Object>> datalist = null;
+    	Integer total = -1;
+    	try {
+    		 datalist = missionInfoDAO.listMissionInfo(offset, size, relsuid, q, recvuid);
+    		 total = missionInfoDAO.getMissionInfoTotal(relsuid, q, recvuid);
+		} catch (Exception e) {
+			// TODO: handle exception
+			map.put("success", false);
+			map.put("msg", "查询时出错");
+			GsonUtil.OnjectToJsonP(map);
+			return;
+		}
     	map.put("success", true);
     	map.put("rows", datalist);
     	map.put("total", total);
@@ -244,7 +256,7 @@ public class _system_userAction extends ActionSupport {
     
     
     
-    /****用户信息相关接口(结束)**********************************************/
+    /****任务信息相关接口(结束)**********************************************/
     
     
     
@@ -263,7 +275,8 @@ public class _system_userAction extends ActionSupport {
 		String MissionCA = strNullCheck(request.getParameter("MissionCA"));
 		String giveScore = strNullCheck(request.getParameter("giveScore"));
 		String BeTime = strNullCheck(request.getParameter("BeTime"));
-		String sql = "call ZH_I_mission ('"+username+"','"+MissionRcecerName+"','"+MissionRecerPhone+"','"+MissionCop+"','"+MissionCA+"',"+giveScore+",'"+BeTime+"')";
+		
+		String sql = "call ZH_I_mission ('"+username+"','"+MissionRcecerName+"','"+MissionRecerPhone+"','"+MissionCop+"','"+MissionCA+"',"+giveScore+",'"+BeTime +"')";
 		try {
 			QueryUtil.ExecUpdate(sql);
 			map.put("sucess", true);

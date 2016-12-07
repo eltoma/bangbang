@@ -13,7 +13,7 @@ import com.BangBang.Util.HibernateUtil;
 public class MissionInfoDAO {
 	
 	public static void main(String[] args) {
-		System.out.println(new MissionInfoDAO().listMissionInfo(0,1,-1,"",-1));
+		System.out.println(new MissionInfoDAO().listMissionInfo(0,3,-1,"",-1));
 		System.out.println(new MissionInfoDAO().getMissionInfoTotal(-1,"",-1));
 	}
 	
@@ -21,7 +21,7 @@ public class MissionInfoDAO {
 		String sql = "	SELECT count(*) "
     			+ "FROM releasemission "
     			+ "WHERE userID = CASE WHEN ? < 0 THEN userID ELSE ? END "
-    			+ "AND MissionRecUserID = CASE WHEN ? < 0 THEN MissionRecUserID ELSE ? END AND "
+    			+ "AND IFNULL(MissionRecUserID,-1) = CASE WHEN ? < 0 THEN IFNULL(MissionRecUserID,-1) ELSE ? END AND "
     			+ "MissionCop LIKE CONCAT('%',?,'%') ";
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -50,7 +50,7 @@ public class MissionInfoDAO {
 		String sql = "	SELECT * "
     			+ "FROM releasemission "
     			+ "WHERE userID = CASE WHEN ? < 0 THEN userID ELSE ? END "
-    			+ "AND MissionRecUserID = CASE WHEN ? < 0 THEN MissionRecUserID ELSE ? END AND "
+    			+ "AND IFNULL(MissionRecUserID,-1) = CASE WHEN ? < 0 THEN IFNULL(MissionRecUserID,-1) ELSE ? END AND "
     			+ "MissionCop LIKE CONCAT('%',?,'%') "
     			+ "ORDER BY MissionReleaseTime "
     			+ "LIMIT ?,?;";
