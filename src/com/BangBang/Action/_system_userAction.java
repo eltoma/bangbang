@@ -279,7 +279,7 @@ public class _system_userAction extends ActionSupport {
 		String sql = "call ZH_I_mission ('"+username+"','"+MissionRcecerName+"','"+MissionRecerPhone+"','"+MissionCop+"','"+MissionCA+"',"+giveScore+",'"+BeTime +"')";
 		try {
 			QueryUtil.ExecUpdate(sql);
-			map.put("sucess", true);
+			map.put("success", true);
 			map.put("msg", "发布成功！");
 		} catch (Exception e) {
 			map.put("success", false);
