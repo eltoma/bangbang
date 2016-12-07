@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -129,5 +130,27 @@ public class QueryUtil {
 		
 		return "1操作成功!";
 	}
+	
+	
+	/**
+	 * @param sqlString
+	 * @throws Exception
+	 * 执行存储过程 
+	 */
+	public static void ExecUpdate(String sqlString) throws Exception {
+		Session session = HibernateUtil.getSessionFactory ().getCurrentSession();		
+		try {
+			session .beginTransaction() ;
+			Query sqlquery=session.createSQLQuery(sqlString);
+			sqlquery.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			e.printStackTrace();
+			throw e;
+		}       
+		
+	}
+	
 }
 

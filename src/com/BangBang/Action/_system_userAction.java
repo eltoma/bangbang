@@ -248,6 +248,38 @@ public class _system_userAction extends ActionSupport {
     
     
     
+    /**
+     * ====================================hao==================================================
+     */  
+    /**
+     * 任务发布 数据插入
+     */
+    public void mission_I_bangbang()
+    {
+    	String username = strNullCheck(request.getParameter("username"));
+		String MissionRcecerName = strNullCheck(request.getParameter("MissionRcecerName"));
+		String MissionRecerPhone = strNullCheck(request.getParameter("MissionRecerPhone"));
+		String MissionCop = strNullCheck(request.getParameter("MissionCop"));
+		String MissionCA = strNullCheck(request.getParameter("MissionCA"));
+		String giveScore = strNullCheck(request.getParameter("giveScore"));
+		String BeTime = strNullCheck(request.getParameter("BeTime"));
+		String sql = "call ZH_I_mission ('"+username+"','"+MissionRcecerName+"','"+MissionRecerPhone+"','"+MissionCop+"','"+MissionCA+"',"+giveScore+",'"+BeTime+"')";
+		try {
+			QueryUtil.ExecUpdate(sql);
+			map.put("sucess", true);
+			map.put("msg", "发布成功！");
+		} catch (Exception e) {
+			map.put("success", false);
+			map.put("msg", "错误信息:"+e.getCause());
+		}
+		GsonUtil.OnjectToJsonP(map);
+    }
+    /**
+     * ====================================hao==================================================
+     */ 
+    
+    
+    
     
     
     
