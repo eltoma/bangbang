@@ -209,35 +209,49 @@ public class _system_userAction extends ActionSupport {
     }
     
     
-    public String strNullCheck(String src){
+  
+    
+	/****用户信息相关接口(结束)**********************************************/
+    
+    /*********************************************************************
+     *                   空参数检验函数
+     *********************************************************************/
+    private String strNullCheck(String src){
     	return (src ==null)?"":src;
     }
     
-	/****用户信息相关接口(结束)**********************************************/
+    private int intIsNull(String str, int rpl) {
+    	return (str == null || str == "")? rpl : Integer.parseInt(str); 
+    }
+    private String strIsNull(String str, String rpl) {
+    	return (str == null || str == "")? rpl : str; 
+    }   
     
     
 	/********************************************************************
 	 *                       任务信息相关接口(开始)
-	 *******************************************************************/
-    public void listMissions(){
-		String q = strNullCheck(request.getParameter("q"));
+	 ********************************************************************/
+    public void listMissions() {
+		String MissionCop = strNullCheck(request.getParameter("MissionCop"));
+		String MissionStatus = strNullCheck(request.getParameter("MissionStatus"));
+		String userName = strNullCheck(request.getParameter("userName"));
 		
-		int offset = intNullCheck(request.getParameter("offset"));
-		int size = intNullCheck(request.getParameter("size"));;
-		int relsuid = intNullCheck(request.getParameter("relsuid"));
-		int recvuid = intNullCheck(request.getParameter("recvuid"));
-		
-		if(offset == -1){ offset = 0;}
-		if(size == -1){ size = 3;}
+		int offset = intIsNull(request.getParameter("offset"), 0);
+		int size = intIsNull(request.getParameter("size"), 3);
+		int relsuid = intIsNull(request.getParameter("relsuid"), -1);
+		int recvuid = intIsNull(request.getParameter("recvuid"), -1);
+		int hasExpired = intIsNull(request.getParameter("hasExpired"), 0);
 		
     	MissionInfoDAO missionInfoDAO = new MissionInfoDAO();
     	List<Map<String, Object>> datalist = null;
-    	Integer total = -1;
+    	Integer total = 0;
+    	
     	try {
-    		 datalist = missionInfoDAO.listMissionInfo(offset, size, relsuid, q, recvuid);
-    		 total = missionInfoDAO.getMissionInfoTotal(relsuid, q, recvuid);
+    		 datalist = missionInfoDAO.listMissionInfo(offset, size, hasExpired, relsuid, recvuid, 
+    				 MissionCop, MissionStatus, userName);
+    		 total = missionInfoDAO.getMissionInfoTotal(hasExpired, relsuid, recvuid, 
+    				 MissionCop, MissionStatus, userName);
 		} catch (Exception e) {
-			// TODO: handle exception
 			map.put("success", false);
 			map.put("msg", "查询时出错");
 			GsonUtil.OnjectToJsonP(map);
@@ -249,13 +263,6 @@ public class _system_userAction extends ActionSupport {
     	
     	GsonUtil.OnjectToJsonP(map);
     }
-    
-    private int intNullCheck(String str) {
-    	return (str == null)?-1:Integer.parseInt(str); 
-    }
-    
-    
-    
     /****任务信息相关接口(结束)**********************************************/
     
     
@@ -287,6 +294,28 @@ public class _system_userAction extends ActionSupport {
 		}
 		GsonUtil.OnjectToJsonP(map);
     }
+    
+    /**
+     * 任务接单
+     */
+    public void mission_u_jiedan()
+    {
+    	String username = strNullCheck(request.getParameter("username"));//接单人
+		String MissionNo = strNullCheck(request.getParameter("MissionNo"));//任务编号
+		String sql = "call ZH_U_jiedan ('"+username+"','"+MissionNo+"')";
+		try {
+			QueryUtil.ExecUpdate(sql);
+			map.put("success", true);
+			map.put("msg", "接单成功！");
+		} catch (Exception e) {
+			map.put("success", false);
+			map.put("msg", "错误信息:"+e.getCause());
+		}
+		GsonUtil.OnjectToJsonP(map);
+    }
+    
+    
+    
     /**
      * ====================================hao==================================================
      */ 
