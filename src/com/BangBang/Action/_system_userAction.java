@@ -234,7 +234,7 @@ public class _system_userAction extends ActionSupport {
     public void listMissions() {
 		String MissionCop = strNullCheck(request.getParameter("MissionCop"));
 		String MissionStatus = strNullCheck(request.getParameter("MissionStatus"));
-		String userName = strNullCheck(request.getParameter("userName"));
+		String MissionRecerName = strNullCheck(request.getParameter("MissionRecerName"));
 		
 		int offset = intIsNull(request.getParameter("offset"), 0);
 		int size = intIsNull(request.getParameter("size"), 3);
@@ -248,9 +248,9 @@ public class _system_userAction extends ActionSupport {
     	
     	try {
     		 datalist = missionInfoDAO.listMissionInfo(offset, size, hasExpired, relsuid, recvuid, 
-    				 MissionCop, MissionStatus, userName);
+    				 MissionCop, MissionStatus, MissionRecerName);
     		 total = missionInfoDAO.getMissionInfoTotal(hasExpired, relsuid, recvuid, 
-    				 MissionCop, MissionStatus, userName);
+    				 MissionCop, MissionStatus, MissionRecerName);
 		} catch (Exception e) {
 			map.put("success", false);
 			map.put("msg", "查询时出错");

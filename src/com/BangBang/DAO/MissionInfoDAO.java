@@ -12,20 +12,23 @@ import com.BangBang.Util.HibernateUtil;
 
 public class MissionInfoDAO {
 	
-
+	public static void main(String[] args) {
+		System.out.println(new MissionInfoDAO().listMissionInfo(0, 100, 1, -1, -1, "", "待接单", "","154546"));
+		System.out.println(new MissionInfoDAO().getMissionInfoTotal(1, -1, -1, "", "待接单", "", "154546"));
+	}
 	
 	public Integer getMissionInfoTotal(int hasExpired,int relsuid, int recvuid, 
-			String MissionCop, String MissionStatus, String userName) {
+			String MissionCop, String MissionStatus, String MissionRecerName, 
+			String MissionCA) {
 		String sql = " SELECT COUNT(*) "
-				   + " FROM releasemission a "
-				   + " LEFT JOIN userinfo b ON a.userID = b.userID "
+				   + " FROM releasemission "
 				   + " WHERE (MissionDeadline >= NOW() OR ?) "
-				   + " AND b.userID = CASE WHEN ? < 0 THEN b.userID ELSE ? END "
+				   + " AND userID = CASE WHEN ? < 0 THEN userID ELSE ? END "
 				   + " AND IFNULL(MissionRecUserID,-1) = CASE WHEN ? < 0 THEN IFNULL(MissionRecUserID,-1) ELSE ? END "
 				   + " AND MissionCop LIKE CONCAT('%',?,'%') "
 				   + " AND MissionStatus LIKE CONCAT('%',?,'%') "
-				   + " AND userName LIKE CONCAT('%',?,'%') "
-				   + " ORDER BY MissionReleaseTime DESC ";
+				   + " AND MissionRecerName LIKE CONCAT('%',?,'%') "
+				   + " AND MissionCA LIKE CONCAT('%',?,'%') ";
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		try {
@@ -40,7 +43,8 @@ public class MissionInfoDAO {
 			
 			query.setString(5, MissionCop);
 			query.setString(6, MissionStatus);
-			query.setString(7, userName);
+			query.setString(7, MissionRecerName);
+			query.setString(8, MissionCA);
 			
 			Integer total = Integer.parseInt(query.list().get(0).toString());
 			session.close();
@@ -53,25 +57,23 @@ public class MissionInfoDAO {
 		
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(new MissionInfoDAO().listMissionInfo(0, 100, 1, -1, -1, "", "", ""));
-		System.out.println(new MissionInfoDAO().getMissionInfoTotal(1, -1, -1, "", "", ""));
-	}
+
 	
 	public List<Map<String, Object>> listMissionInfo(int offset, int size, int hasExpired,
-			int relsuid, int recvuid, String MissionCop, String MissionStatus, String userName){
+			int relsuid, int recvuid, String MissionCop, String MissionStatus, 
+			String MissionRecerName, String MissionCA){
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		String sql = " SELECT a.*, "
-				   + "b.userName FROM releasemission a "
-				   + "LEFT JOIN userinfo b ON a.userID = b.userID "
-				   + "WHERE (MissionDeadline >= NOW() OR ?) "
-				   + "AND b.userID = CASE WHEN ? < 0 THEN b.userID ELSE ? END "
-				   + "AND IFNULL(MissionRecUserID,-1) = CASE WHEN ? < 0 THEN IFNULL(MissionRecUserID,-1) ELSE ? END "
-				   + "AND MissionCop LIKE CONCAT('%',?,'%') "
-				   + "AND MissionStatus LIKE CONCAT('%',?,'%') "
-				   + "AND userName LIKE CONCAT('%',?,'%') "
-				   + "ORDER BY MissionReleaseTime DESC "
-				   + "LIMIT ?,?; ";
+		String sql = " SELECT * "
+				   + " FROM releasemission "
+				   + " WHERE (MissionDeadline >= NOW() OR ?) "
+				   + " AND userID = CASE WHEN ? < 0 THEN userID ELSE ? END "
+				   + " AND IFNULL(MissionRecUserID,-1) = CASE WHEN ? < 0 THEN IFNULL(MissionRecUserID,-1) ELSE ? END "
+				   + " AND MissionCop LIKE CONCAT('%',?,'%') "
+				   + " AND MissionStatus LIKE CONCAT('%',?,'%') "
+				   + " AND MissionRecerName LIKE CONCAT('%',?,'%') "
+				   + " AND MissionCA LIKE CONCAT('%',?,'%') "
+				   + " ORDER BY MissionReleaseTime DESC "
+				   + " LIMIT ?,?; ";
 		
 		List datalist = null;
 		try {
@@ -81,14 +83,14 @@ public class MissionInfoDAO {
 			query.setInteger(2, relsuid);
 			query.setInteger(3, recvuid);
 			query.setInteger(4, recvuid);
-			query.setInteger(8, offset);
-			query.setInteger(9, size);
+			query.setInteger(9, offset);
+			query.setInteger(10, size);
 			
 			query.setString(5, MissionCop);
 			query.setString(6, MissionStatus);
-			query.setString(7, userName);
+			query.setString(7, MissionRecerName);
+			query.setString(8, MissionCA);
 			
-			System.out.println(query.getQueryString());
 			datalist = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 			session.close();
 		} catch (Exception e) {
