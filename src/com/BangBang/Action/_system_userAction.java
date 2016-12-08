@@ -130,7 +130,7 @@ public class _system_userAction extends ActionSupport {
 		}
 		
 		String sqlexist = "select * from userinfo where userName=?";
-		String sqladd = "INSERT INTO userinfo(userName, password, phoneNumber,score) VALUES( ?, ?, ?,10)";
+		String sqladd = "INSERT INTO userinfo(userName, password, phoneNumber,score) VALUES( ?, ?, ?,50)";
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		
 		String md5passwd = CipherUtil.generatePassword(password);
@@ -313,6 +313,46 @@ public class _system_userAction extends ActionSupport {
 		}
 		GsonUtil.OnjectToJsonP(map);
     }
+    
+    /**
+     * 任务接单
+     */
+    public void mission_u_jiedan()
+    {
+    	String username = strNullCheck(request.getParameter("username"));//接单人
+		String MissionNo = strNullCheck(request.getParameter("MissionNo"));//任务编号
+		String sql = "call ZH_U_jiedan ('"+username+"','"+MissionNo+"')";
+		try {
+			QueryUtil.ExecUpdate(sql);
+			map.put("sucess", true);
+			map.put("msg", "接单成功！");
+		} catch (Exception e) {
+			map.put("success", false);
+			map.put("msg", "错误信息:"+e.getCause());
+		}
+		GsonUtil.OnjectToJsonP(map);
+    }
+
+
+
+    /**
+     * 任务完成确认
+     */
+    public void mission_u_confirm()
+    {
+		String MissionNo = strNullCheck(request.getParameter("MissionNo"));//任务编号
+		String sql = "call ZH_U_confirm ('"+MissionNo+"')";
+		try {
+			QueryUtil.ExecUpdate(sql);
+			map.put("success", true);
+			map.put("msg", "确认成功！");
+		} catch (Exception e) {
+			map.put("success", false);
+			map.put("msg", "错误信息:"+e.getCause());
+		}
+		GsonUtil.OnjectToJsonP(map);
+    }
+
     
     
     
