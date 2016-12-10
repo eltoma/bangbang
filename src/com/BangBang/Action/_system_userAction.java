@@ -10,10 +10,12 @@ import java.util.Set;
 
 
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.chainsaw.Main;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,6 +38,7 @@ public class _system_userAction extends ActionSupport {
 	HttpSession htsession  = request.getSession();	
 	
 	Map<String, Object> map = new HashMap<String, Object>();
+	
 	
 	/********************************************************************
 	 *                       用户信息相关接口(开始)
